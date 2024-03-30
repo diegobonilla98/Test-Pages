@@ -121,20 +121,24 @@
         function calculatePrice() {
             var dataType = document.getElementById('data_type').value;
             var dataAmount = parseInt(document.getElementById('data_amount').value);
-            var documentPrice = parseFloat(slider.noUiSlider.get());
-            var baseCost = dataType === 'text' ? 0.005 : 0.01;
-            var volumeDiscount = dataAmount > 5000 ? 0.95 : 1;
-            var managementCostPerDocument = baseCost * volumeDiscount;
-            var totalManagementCost = managementCostPerDocument * dataAmount;
-            var totalPrice = (documentPrice * dataAmount) + totalManagementCost;
-            var annotatorShare = documentPrice * dataAmount;
-            var taggleShare = totalManagementCost;
-
+            var documentPrice = parseFloat(document.getElementById('document_price').textContent);
+        
+            // Estableciendo una estructura de costos realista
+            var managementCostBase = 50; // Un costo base fijo para cubrir gastos operativos básicos
+            var managementCostPerDocument = dataType === 'text' ? 0.005 : 0.01; // Costo adicional por documento
+            var volumeCost = (dataAmount > 5000) ? 0.95 * dataAmount * managementCostPerDocument : dataAmount * managementCostPerDocument;
+            var totalManagementCost = managementCostBase + volumeCost; // Costo de gestión total sumando el costo base y el variable
+        
+            var totalPrice = (documentPrice * dataAmount) + totalManagementCost; // Precio total incluyendo pago a anotadores y costos de gestión
+            var annotatorShare = documentPrice * dataAmount; // Total para los anotadores
+            var taggleShare = totalManagementCost; // Total para Taggle (ganancias + costos de gestión cubiertos)
+        
             document.getElementById('price_result').innerHTML = 'Precio Total: $' + totalPrice.toFixed(2) +
                 '<br>Costo de Gestión Total: $' + totalManagementCost.toFixed(2) +
                 '<br>Valor para Anotadores: $' + annotatorShare.toFixed(2) +
-                '<br>Ganancias de Taggle: $' + taggleShare.toFixed(2);
+                '<br>Ganancias de Taggle (incluyendo gestión): $' + (totalPrice - annotatorShare).toFixed(2);
         }
+
     </script>
 </body>
 </html>
